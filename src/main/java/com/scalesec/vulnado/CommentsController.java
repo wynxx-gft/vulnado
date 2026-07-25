@@ -11,22 +11,25 @@ import java.io.Serializable;
 @EnableAutoConfiguration
 public class CommentsController {
   @Value("${app.secret}")
+  private String allowedOrigins;
+  @Value("${app.cors.allowed-origins:https://trusted-domain.com}")
+
   private String secret;
 
-  @CrossOrigin(origins = "*")
+  @CrossOrigin(origins = "${app.cors.allowed-origins:https://trusted-domain.com}")
   @RequestMapping(value = "/comments", method = RequestMethod.GET, produces = "application/json")
   List<Comment> comments(@RequestHeader(value="x-auth-token") String token) {
     User.assertAuth(secret, token);
     return Comment.fetch_all();
   }
 
-  @CrossOrigin(origins = "*")
+  @CrossOrigin(origins = "${app.cors.allowed-origins:https://trusted-domain.com}")
   @RequestMapping(value = "/comments", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   Comment createComment(@RequestHeader(value="x-auth-token") String token, @RequestBody CommentRequest input) {
     return Comment.create(input.username, input.body);
   }
 
-  @CrossOrigin(origins = "*")
+  @CrossOrigin(origins = "${app.cors.allowed-origins:https://trusted-domain.com}")
   @RequestMapping(value = "/comments/{id}", method = RequestMethod.DELETE, produces = "application/json")
   Boolean deleteComment(@RequestHeader(value="x-auth-token") String token, @PathVariable("id") String id) {
     return Comment.delete(id);
