@@ -30,9 +30,8 @@ public class User {
       Jwts.parser()
         .setSigningKey(key)
         .parseClaimsJws(token);
-    } catch(Exception e) {
-      e.printStackTrace();
-      throw new Unauthorized(e.getMessage());
+        } catch(Exception e) {
+            throw new Unauthorized(e.getMessage());
     }
   }
 
@@ -42,10 +41,10 @@ public class User {
     try {
       Connection cxn = Postgres.connection();
       stmt = cxn.createStatement();
-      System.out.println("Opened database successfully");
-
-      String query = "select * from users where username = '" + un + "' limit 1";
-      System.out.println(query);
+            String query = "select * from users where username = ? limit 1";
+            java.sql.PreparedStatement stmt = cxn.prepareStatement(query);
+            stmt.setString(1, un);
+            ResultSet rs = stmt.executeQuery();
       ResultSet rs = stmt.executeQuery(query);
       if (rs.next()) {
         String user_id = rs.getString("user_id");
@@ -54,9 +53,8 @@ public class User {
         user = new User(user_id, username, password);
       }
       cxn.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.err.println(e.getClass().getName()+": "+e.getMessage());
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
     } finally {
       return user;
     }
