@@ -11,10 +11,10 @@ import java.io.Serializable;
 @RestController
 @EnableAutoConfiguration
 public class LoginController {
-  @Value("${app.secret}")
+ @Value("${app.secret}")
   private String secret;
 
-  @CrossOrigin(origins = "*")
+ @CrossOrigin(origins = "${cors.allowed-origins:http://localhost:3000}")
   @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
   LoginResponse login(@RequestBody LoginRequest input) {
     User user = User.fetch(input.username);
